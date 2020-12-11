@@ -26,7 +26,7 @@ def line(a,b,x,y):
     turtle.goto(x,y)
     
 
-class Vector(collections.Sequence):
+class vector(collections.Sequence):
     # Seq in form of tuple (1,2)
     
     '''

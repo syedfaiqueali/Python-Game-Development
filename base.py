@@ -161,6 +161,12 @@ class Vector(collections.Sequence):
                 return self.x != other.x or self.y != other.y
             return NotImplemented
         
+        #-------------------------------------------------
+        # No replacement in mul, add, div or sub but
+        # replacement in vector in the caseof imul,
+        # iadd, and soon.
+        #-------------------------------------------------
+        
         def __iadd__(self, other):
             '''
             v.__iadd__(w) -> v += w
@@ -249,6 +255,102 @@ class Vector(collections.Sequence):
             '''
             copy = self.copy()
             return copy.__isub__(other)
+        
+        def __imul__(self,other):
+            # v.__imul__(w) => v *= w
             
+            if self._hash is not None:
+                raise ValueError('cannot multiply vector after hashing')
+            elif isinstance(other,vector):
+                self.x *= other.x
+                self.y *= other.y
+            else:
+                self.x *= other
+                self.y *= other
+            return self
+        
+        def __mul__(self,other):
+            # v.__mul__(w) => v * w
+            '''
+            v = vector(1,2)
+            w = vector(3,4)
+            v * w 
+            vector(3,8)
+            v * 2
+            vector(2,4)
+            3.0 * v
+            vector(3.0,6.0)
+            '''
+            copy = self.copy()
+            return copy.__imul__(other)
+        
+        __rmul__ =__mul__ # ready mul should be call to i.e mul
+        
+        def scale(self,other):
+            self.__imul__(other)
+            
+        def __itruediv__(self,other):
+            # v.__itruediv__(w) => v /= w
+            
+            if self._hash is not None:
+                raise ValueError('cannot divide vector after hashing')
+            elif isinstance(other,vector):
+                self.x /= other.x
+                self.y /= other.y
+            else:
+                self.x /= other
+                self.y /= other
+            return self
+        
+        def __truediv__(self,other):
+            # v.__truediv__(w) => v / w
+            '''
+            v = vector(1,2)
+            w = vector(3,4)
+            v * w 
+            vector(3,8)
+            v * 2
+            vector(2,4)
+            3.0 * v
+            vector(3.0,6.0)
+            '''
+            copy = self.copy() # copy of self(v)
+            return copy.__itruediv__(other)
+        
+        def __neg__(self):
+            # v.__neg__() -> v
+            '''
+            v = vector(1,2) -> vector(-1,-2)
+            ''' 
+            copy = self.copy()
+            copy.x = -copy.x
+            copy.y = -copy.y
+            return copy
+        
+        def __abs__(self):
+            # vector(3,4) => 5
+            return (self.x**2 + self.y**2)**0.5 # **0.5 for under root
+        
+        def rotate(self,angle):
+            # (x,y) => (x cos 0 - y sin 0, y sin 0 + x sin 0)
+            # Make '0' in rad => (0 * pi / 180)
+            if self._hash is not None:
+                raise ValueError('Cannot rotate vector after hashing')
+            radians = angle * math.pi / 180.0
+            cosine = math.cos(radians)
+            sine = math.sin(radians)
+            
+            x = self.x
+            y = self.y
+            
+            self.x = x*cosine - y*sine
+            self.y = y*cosine + x*sine
+            
+        def __repr__():
+            # v.__repr__() => repr(v)
+            type_self = type(self)
+            name = type_self.__name__
+            return '{} ({!r}, {!r})'.format(name,self.x, self.y)
+        
         
     

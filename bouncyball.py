@@ -7,6 +7,7 @@ Created on Sat Dec 12 21:06:59 2020
 
 from random import *
 from turtle import *
+
 from base import vector
 
 def value():
